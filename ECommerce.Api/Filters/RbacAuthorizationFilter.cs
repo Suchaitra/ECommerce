@@ -52,6 +52,9 @@ public class RbacAuthorizationFilter : IAsyncAuthorizationFilter
             return;
         }
 
+        // ADDED FIX: Explicitly allow access if the route only requires a basic login
+        if (endpoint.AuthMode == "Login") return;
+
         // 2. Super Admin Bypass (Processed BEFORE the unmapped lockout)
         if (user.Roles.Any(r => r.IsSystem && r.Name == "Super admin")) return;
 

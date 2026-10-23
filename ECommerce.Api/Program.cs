@@ -8,16 +8,15 @@ using ECommerceRbac.Interceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<AuditInterceptor>();
-
 builder.Services.AddDbContext<AppDbContext>((sp, options) =>
 {
     var interceptor = sp.GetRequiredService<AuditInterceptor>();
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
            .AddInterceptors(interceptor);
 });
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -60,9 +59,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
+// JSON Cycle Fix Applied Here
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ECommerceRbac.Filters.RbacAuthorizationFilter>();
+}).AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
 builder.Services.AddOpenApi();

@@ -139,8 +139,14 @@ namespace ECommerceRbac.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Resource")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Code");
